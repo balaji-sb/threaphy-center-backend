@@ -97,3 +97,44 @@ export const verifyPayment = async (req: AuthRequest, res: Response) => {
     res.status(500).json({ message: "Error verifying payment", error });
   }
 };
+
+export const updateAppointment = async (
+  req: AuthRequest,
+  res: Response,
+): Promise<void> => {
+  try {
+    const { status, date } = req.body;
+
+    // Only Admin or specific roles should likely do this but for now we trust `authenticate` + context
+    const appointment = await Appointment.findByIdAndUpdate(
+      req.params.id,
+      { status, date },
+      { new: true },
+    ).populate("client therapist service");
+
+    if (!appointment) {
+      res.status(404).json({ message: "Appointment not found" });
+      return;
+    }
+
+    res.json(appointment);
+  } catch (error) {
+    res.status(500).json({ message: "Error updating appointment", error });
+  }
+};
+
+export const deleteAppointment = async (
+  req: AuthRequest,
+  res: Response,
+): Promise<void> => {
+  try {
+    const appointment = await Appointment.findByIdAndDelete(req.params.id);
+    if (!appointment) {
+      res.status(404).json({ message: "Appointment not found" });
+      return;
+    }
+    res.json({ message: "Appointment deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ message: "Error deleting appointment", error });
+  }
+};

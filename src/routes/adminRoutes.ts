@@ -1,13 +1,12 @@
 import { Router } from "express";
 import { getAdminStats } from "../controllers/adminController";
-import { authenticate } from "../middleware/auth";
+import { authenticateRole } from "../middleware/auth";
 
 const router = Router();
 
-// Apply auth middleware
-router.use(authenticate);
+// Only tokens signed with the ADMIN secret will pass
+router.use(authenticateRole("admin"));
 
-// In a real app we would add role-based checking (role === "admin")
 router.get("/stats", getAdminStats);
 
 export default router;

@@ -3,16 +3,26 @@ import {
   getAppointments,
   bookAppointment,
   verifyPayment,
+  updateAppointment,
+  deleteAppointment,
 } from "../controllers/appointmentController";
-import { authenticate } from "../middleware/auth";
+import { authenticateRole } from "../middleware/auth";
 
 const router = Router();
 
-// Make sure auth middleware is applied to these routes
-router.use(authenticate);
+// Allow all authenticated roles to GET (filtering happens in controller)
+router.get(
+  "/",
+  authenticateRole("admin", "therapist", "client"),
+  getAppointments,
+);
 
-router.get("/", getAppointments);
-router.post("/book", bookAppointment);
-router.post("/verify-payment", verifyPayment);
+// Only clients can book or verify payment
+router.post("/book", authenticateRole("client"), bookAppointment);
+router.post("/verify-payment", authenticateRole("client"), verifyPayment);
+
+// Only admins can update or delete for now
+router.put("/:id", authenticateRole("admin"), updateAppointment);
+router.delete("/:id", authenticateRole("admin"), deleteAppointment);
 
 export default router;

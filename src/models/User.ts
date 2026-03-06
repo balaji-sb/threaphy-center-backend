@@ -6,6 +6,8 @@ export interface IUser extends Document {
   passwordHash: string;
   role: "admin" | "therapist" | "client";
   phone?: string;
+  bio?: { en: string; ta: string };
+  specialties?: { en: string[]; ta: string[] };
 }
 
 const userSchema = new Schema<IUser>(
@@ -19,6 +21,14 @@ const userSchema = new Schema<IUser>(
       default: "client",
     },
     phone: { type: String },
+    bio: {
+      en: { type: String, default: "" },
+      ta: { type: String, default: "" },
+    },
+    specialties: {
+      en: [{ type: String }],
+      ta: [{ type: String }],
+    },
   },
   { timestamps: true },
 );

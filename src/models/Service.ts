@@ -11,6 +11,19 @@ export interface IService extends Document {
   };
   durationMinutes: number;
   price: number;
+  icon?: string;
+  methodology?: {
+    en: string;
+    ta: string;
+  };
+  confidentiality?: {
+    en: string;
+    ta: string;
+  };
+  whatToExpect?: {
+    en: string[];
+    ta: string[];
+  };
 }
 
 const serviceSchema = new Schema<IService>(
@@ -25,6 +38,19 @@ const serviceSchema = new Schema<IService>(
     },
     durationMinutes: { type: Number, required: true },
     price: { type: Number, required: true },
+    icon: { type: String, default: "✨" },
+    methodology: {
+      en: { type: String, default: "" },
+      ta: { type: String, default: "" },
+    },
+    confidentiality: {
+      en: { type: String, default: "" },
+      ta: { type: String, default: "" },
+    },
+    whatToExpect: {
+      en: { type: [String], default: [] },
+      ta: { type: [String], default: [] },
+    },
   },
   { timestamps: true },
 );

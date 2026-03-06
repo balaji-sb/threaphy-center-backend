@@ -12,7 +12,14 @@ const app = express();
 
 // Security Middleware
 app.use(helmet());
-app.use(cors());
+app.use(
+  cors({
+    origin: process.env.CLIENT_URL || "http://localhost:3000",
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  }),
+);
 app.use(express.json());
 
 // Rate Limiting
@@ -28,6 +35,7 @@ app.use(limiter);
 import authRoutes from "./routes/authRoutes";
 import serviceRoutes from "./routes/serviceRoutes";
 import therapistRoutes from "./routes/therapistRoutes";
+import userRoutes from "./routes/userRoutes";
 import blogRoutes from "./routes/blogRoutes";
 import appointmentRoutes from "./routes/appointmentRoutes";
 import adminRoutes from "./routes/adminRoutes";
@@ -36,6 +44,7 @@ import adminRoutes from "./routes/adminRoutes";
 app.use("/api/auth", authRoutes);
 app.use("/api/services", serviceRoutes);
 app.use("/api/users/therapists", therapistRoutes);
+app.use("/api/users", userRoutes);
 app.use("/api/blogs", blogRoutes);
 app.use("/api/appointments", appointmentRoutes);
 app.use("/api/admin", adminRoutes);
@@ -51,7 +60,7 @@ app.use((err: any, req: Request, res: Response, next: NextFunction) => {
   res.status(500).json({ message: "Internal Server Error" });
 });
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5001;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
