@@ -6,12 +6,27 @@ import rateLimit from "express-rate-limit";
 import { connectDB } from "./config/db";
 
 // Connect to MongoDB
+import path from "path";
+import fs from "fs";
+
+// Connect to MongoDB
 connectDB();
 
 const app = express();
 
+// Ensure upload directory exists for static serving
+const uploadDir = path.join(process.cwd(), "public", "uploads");
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir, { recursive: true });
+}
+
+// Static Files
+app.use("/uploads", express.static(uploadDir));
+
 // Security Middleware
-app.use(helmet());
+app.use(helmet({
+  crossOriginResourcePolicy: { policy: "cross-origin" }
+}));
 app.use(
   cors({
     origin: process.env.CLIENT_URL || "http://localhost:3000",
@@ -39,6 +54,7 @@ import userRoutes from "./routes/userRoutes";
 import blogRoutes from "./routes/blogRoutes";
 import appointmentRoutes from "./routes/appointmentRoutes";
 import adminRoutes from "./routes/adminRoutes";
+import eventRoutes from "./routes/eventRoutes";
 
 // API Routes setup
 app.use("/api/auth", authRoutes);
@@ -48,6 +64,7 @@ app.use("/api/users", userRoutes);
 app.use("/api/blogs", blogRoutes);
 app.use("/api/appointments", appointmentRoutes);
 app.use("/api/admin", adminRoutes);
+app.use("/api/events", eventRoutes);
 
 // Basic Route for testing
 app.get("/api/health", (req: Request, res: Response) => {

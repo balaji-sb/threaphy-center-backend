@@ -24,7 +24,7 @@ export const createTherapist = async (
   res: Response,
 ): Promise<void> => {
   try {
-    const { name, email, password } = req.body;
+    const { name, email, password, phone, bio, specialties } = req.body;
 
     // Check if therapist exists
     const existing = await User.findOne({ email });
@@ -41,6 +41,9 @@ export const createTherapist = async (
       email,
       passwordHash,
       role: "therapist",
+      phone,
+      bio,
+      specialties,
     });
 
     const therapistObj = therapist.toObject();
@@ -61,8 +64,8 @@ export const updateTherapist = async (
   res: Response,
 ): Promise<void> => {
   try {
-    const { name, email, password } = req.body;
-    const updateData: any = { name, email };
+    const { name, email, password, phone, bio, specialties } = req.body;
+    const updateData: any = { name, email, phone, bio, specialties };
 
     if (password) {
       const salt = await bcrypt.genSalt(10);
